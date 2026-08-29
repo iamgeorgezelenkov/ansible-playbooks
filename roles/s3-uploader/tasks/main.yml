@@ -12,7 +12,7 @@
 - name: Копировать скрипт загрузки
   copy:
     src: files/upload_to_s3.py
-    dest: /home/admo/upload_to_s3.py
+    dest: /home/user/upload_to_s3.py
     mode: '0755'
 
 - name: Создать systemd-юнит
