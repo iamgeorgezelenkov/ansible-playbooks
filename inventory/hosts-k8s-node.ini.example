@@ -1,2 +1,2 @@
 [kubernetes_host]
-node1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=admo
+node1 ansible_host=213.171.28.34 ansible_port=2222 ansible_user=user
