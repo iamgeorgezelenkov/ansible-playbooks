@@ -1,16 +1,16 @@
 all:
   vars:
-    ansible_user: admo
-    ansible_ssh_private_key_file: ~/.ssh/id_ed25519_virtualbox
-    ansible_become_password: "George010"
+    ansible_user: user
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_become_password: "****"
 
   hosts:
     my-vm:
-      ansible_host: 192.168.56.105
-    # network_ip: 192.168.56.105  
+      ansible_host: 213.171.28.34
+    # network_ip: 213.171.28.34  
       users:
-        - name: admo
-          ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJI6kOmE+GGiIlXvJNUJhORRdb6gIQlL9Z+6EDK31b3t root@ECHIPSComputer"
+        - name: user
+          ssh_key: "****"
       system_group: "admins"
       ufw_rules:
         - rule: allow
