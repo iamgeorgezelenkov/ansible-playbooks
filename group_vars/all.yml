@@ -1,0 +1,23 @@
+---
+# Общие настройки для ВСЕХ серверов
+network_gateway: 192.168.1.1
+network_dns:
+  - 8.8.8.8
+  - 8.8.4.4
+
+# Общие пользователи для всех серверов
+common_users:
+  - name: backup
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCy..."
+
+# Дополнительные правила firewall
+ufw_rules:
+  - rule: allow
+    port: "22"
+    proto: tcp
+  - rule: allow
+    port: "9100"
+    proto: tcp
+  - rule: limit
+    port: "22"
+    proto: tcp

@@ -1,0 +1,17 @@
+# Общие
+project_dir: /home/user1
+
+# Бакет
+bucket_name: bucket-llama-models
+s3_endpoint: https://s3.cloud.ru
+model_file: model.gguf
+
+# Registry
+registry_url: my-llama-models.cr.cloud.ru
+registry_username: ce6f6997e13e4b0eb601d0713d12d98c
+llama_image: "{{ registry_url }}/llama-cpp-server:server"
+
+# Контейнер
+container_name: llama-coder
+host_port: 8080
+container_port: 8080

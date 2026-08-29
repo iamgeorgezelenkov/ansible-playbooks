@@ -1,0 +1,14 @@
+[Unit]
+Description=Upload stock.csv to Yandex S3
+After=network.target
+
+[Service]
+Type=simple
+User=admo
+WorkingDirectory=/home/admo
+ExecStart=/usr/bin/python3 /home/admo/upload_to_s3.py
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

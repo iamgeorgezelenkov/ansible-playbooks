@@ -1,0 +1,27 @@
+---
+- name: Install AWS CLI via snap
+  community.general.snap:
+    name: aws-cli
+    classic: yes
+  become: yes
+
+- name: Create .aws directory
+  file:
+    path: "{{ ansible_env.HOME }}/.aws"
+    state: directory
+    mode: '0700'
+
+- name: Configure AWS credentials
+  template:
+    src: credentials.j2
+    dest: "{{ ansible_env.HOME }}/.aws/credentials"
+    mode: '0600'
+  vars:
+    aws_access_key_id: "{{ aws_access_key }}"
+    aws_secret_access_key: "{{ aws_secret_key }}"
+
+- name: Configure AWS config
+  template:
+    src: config.j2
+    dest: "{{ ansible_env.HOME }}/.aws/config"
+    mode: '0644'

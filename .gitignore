@@ -1,0 +1,6 @@
+*Zone.Identifier
+*.tar.gz
+*.retry
+*.log
+.vscode/
+.idea/

@@ -1,0 +1,33 @@
+---
+- name: Установить зависимости
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Установить python3-boto3 из репозитория Ubuntu
+  apt:
+    name: python3-boto3
+    state: present
+
+- name: Копировать скрипт загрузки
+  copy:
+    src: files/upload_to_s3.py
+    dest: /home/admo/upload_to_s3.py
+    mode: '0755'
+
+- name: Создать systemd-юнит
+  template:
+    src: templates/upload.service.j2
+    dest: /etc/systemd/system/upload-to-s3.service
+  register: service_created
+
+- name: Перезагрузить systemd
+  systemd:
+    daemon_reload: yes
+  when: service_created.changed
+
+- name: Включить и запустить службу
+  systemd:
+    name: upload-to-s3
+    enabled: yes
+    state: started

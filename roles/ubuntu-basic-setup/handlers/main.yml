@@ -1,0 +1,13 @@
+---
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+  when: not ansible_check_mode
+
+- name: restart node_exporter
+  systemd:
+    name: node_exporter
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: not ansible_check_mode

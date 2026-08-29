@@ -1,0 +1,106 @@
+---
+# 1. ОБНОВЛЕНИЕ СИСТЕМЫ
+- name: Обновить apt кэш
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Обновить все пакеты
+  apt:
+    upgrade: dist
+    autoremove: yes
+
+# 2. ГРУППА И ПОЛЬЗОВАТЕЛИ
+- name: Создать системную группу
+  group:
+    name: "{{ system_group }}"
+    state: present
+
+- name: Создать пользователей
+  user:
+    name: "{{ item.name }}"
+    groups: sudo
+    shell: /bin/bash
+    create_home: yes
+    state: present
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Разрешить группе sudo без пароля
+  lineinfile:
+    path: /etc/sudoers.d/ansible
+    line: "%{{ system_group }} ALL=(ALL) NOPASSWD: ALL"
+    create: yes
+    validate: 'visudo -cf %s'
+
+# 3. SSH КЛЮЧИ
+- name: Установить SSH ключи
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.ssh_key }}"
+    state: present
+  loop: "{{ users }}"
+  when: item.ssh_key is defined
+
+# 4. БАЗОВЫЕ ПАКЕТЫ
+- name: Установить базовые пакеты
+  apt:
+    name:
+      - curl
+      - htop
+      - ncdu
+      - git
+      - unattended-upgrades
+    state: present
+
+# 5. NODE_EXPORTER
+- name: Создать пользователя node_exporter
+  user:
+    name: node_exporter
+    system: yes
+    shell: /usr/sbin/nologin
+    state: present
+
+- name: Скачать node_exporter 1.10.2
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-amd64.tar.gz"
+    dest: /tmp/node_exporter.tar.gz
+  check_mode: no
+
+- name: Распаковать node_exporter
+  unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    owner: node_exporter
+    group: node_exporter
+    mode: '0755'
+    extra_opts: ["--strip-components=1", "--wildcards", "*node_exporter"]
+  when: not ansible_check_mode
+
+- name: Настроить systemd сервис
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - daemon reload
+    - restart node_exporter
+
+# 6. FIREWALL
+- name: Настроить UFW
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port|default(omit) }}"
+    proto: "{{ item.proto|default('tcp') }}"
+    from_ip: "{{ item.from|default('any') }}"
+  loop: "{{ ufw_rules }}"
+  when: ufw_rules is defined
+
+- name: Включить UFW
+  ufw:
+    state: enabled
+    policy: deny

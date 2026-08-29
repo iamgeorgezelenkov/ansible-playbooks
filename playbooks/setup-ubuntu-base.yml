@@ -1,0 +1,16 @@
+---
+- name: Настройка Ubuntu серверов
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  pre_tasks:
+    - name: Проверить, что это Ubuntu 24.04
+      fail:
+        msg: "Требуется Ubuntu 24.04"
+      when: >
+        ansible_distribution != "Ubuntu" or
+        ansible_distribution_version != "24.04"
+
+  roles:
+    - role: ubuntu-basic-setup

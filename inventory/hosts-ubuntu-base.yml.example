@@ -1,0 +1,21 @@
+all:
+  vars:
+    ansible_user: admo
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519_virtualbox
+    ansible_become_password: "George010"
+
+  hosts:
+    my-vm:
+      ansible_host: 192.168.56.105
+    # network_ip: 192.168.56.105  
+      users:
+        - name: admo
+          ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJI6kOmE+GGiIlXvJNUJhORRdb6gIQlL9Z+6EDK31b3t root@ECHIPSComputer"
+      system_group: "admins"
+      ufw_rules:
+        - rule: allow
+          port: "22"
+          proto: tcp
+        - rule: allow
+          port: "9100"
+          proto: tcp

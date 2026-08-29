@@ -1,0 +1,6 @@
+all:
+  hosts:
+    llama-vm:
+      ansible_host: 95.174.93.144
+      ansible_user: user1
+      ansible_ssh_private_key_file: "/home/admo/.ssh/id_ed25519"

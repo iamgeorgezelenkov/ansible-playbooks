@@ -1,0 +1,39 @@
+---
+- name: Download model from S3
+  command: >
+    aws s3 cp s3://{{ bucket_name }}/{{ model_file }} {{ ansible_env.HOME }}/{{ model_file }}
+    --endpoint-url {{ s3_endpoint }}
+  args:
+    creates: "{{ ansible_env.HOME }}/{{ model_file }}"
+
+- name: Login to container registry
+  docker_login:
+    registry_url: "{{ registry_url }}"
+    username: "{{ registry_username }}"
+    password: "{{ registry_password }}"
+    reauthorize: yes
+
+- name: Pull llama-server image
+  docker_image:
+    name: "{{ llama_image }}"
+    source: pull
+
+- name: Stop and remove existing container
+  docker_container:
+    name: "{{ container_name }}"
+    state: absent
+
+- name: Run llama-server container
+  docker_container:
+    name: "{{ container_name }}"
+    image: "{{ llama_image }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ host_port }}:{{ container_port }}"
+    volumes:
+      - "{{ ansible_env.HOME }}/{{ model_file }}:/models/{{ model_file }}"
+    command: >
+      -m /models/{{ model_file }}
+      --host 0.0.0.0
+      --port {{ container_port }}

@@ -1,0 +1,21 @@
+---
+# Настройки сети по умолчанию
+network_prefix: 24
+
+# Пользователи
+users: []
+system_group: "admins"
+
+# Node Exporter (версия теперь захардкожена в tasks)
+# node_exporter_version: "1.10.2"  - УБРАНО
+
+# UFW правила
+ufw_rules:
+  - rule: allow
+    port: "22"
+    proto: tcp
+    comment: "SSH"
+  - rule: allow
+    port: "9100"
+    proto: tcp
+    comment: "Node Exporter"

@@ -1,0 +1,13 @@
+---
+- name: Deploy LLM model on cloud.ru VM
+  hosts: llama-vm
+  become: yes
+  vars_files:
+    - ../group_vars/all/vars.yml
+    - ../group_vars/all/vault.yml
+
+  roles:
+    - common
+    - docker
+    - aws-cli
+    - llama
